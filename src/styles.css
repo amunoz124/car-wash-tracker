@@ -1,0 +1,117 @@
+:root{
+  font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+  color:#f7fbff;
+  background:#07131d;
+  font-synthesis:none;
+  --bg:#07131d;
+  --bg-2:#0a1a26;
+  --panel:#0d2130;
+  --panel-2:#102838;
+  --panel-3:#142f40;
+  --border:#244052;
+  --muted:#8fa4b3;
+  --text:#f5f9fc;
+  --accent:#3ee48b;
+  --accent-2:#22c878;
+  --accent-soft:rgba(62,228,139,.12);
+  --danger:#ff5d68;
+  --danger-soft:rgba(255,93,104,.11);
+  --shadow:0 22px 70px rgba(0,0,0,.34);
+}
+*{box-sizing:border-box}
+html{background:var(--bg)}
+body{margin:0;min-height:100vh;background:radial-gradient(circle at 50% -20%,#15364a 0,#0a1a26 38%,var(--bg) 70%);color:var(--text)}
+button,input,select{font:inherit}button{color:inherit}button:disabled{opacity:.45;cursor:not-allowed}svg{display:block;width:1.25em;height:1.25em}
+.hidden{display:none!important}.muted{color:var(--muted)}
+
+.login-page{min-height:100vh;display:grid;place-items:center;padding:28px 18px}
+.auth-card{width:min(430px,100%);padding:36px 30px 30px;border:1px solid var(--border);border-radius:22px;background:linear-gradient(180deg,rgba(13,33,48,.98),rgba(7,25,36,.98));box-shadow:var(--shadow);text-align:center}
+.brand-mark{width:88px;height:88px;margin:0 auto 18px;position:relative;color:var(--accent)}.brand-mark>svg{width:76px;height:76px;position:absolute;left:6px;bottom:0}.drop{position:absolute;width:9px;height:13px;background:var(--accent);border-radius:70% 30% 55% 45%;transform:rotate(45deg)}.drop-one{top:3px;left:38px}.drop-two{top:17px;left:20px;width:7px;height:10px}.drop-three{top:20px;right:18px;width:7px;height:10px}
+.auth-card h1{font-size:2rem;margin:0}.auth-subtitle{margin:8px 0 0;color:#d8e3ea}.auth-form{text-align:left}.stack{display:grid;gap:16px;margin-top:28px}.stack label,.modal label,.schedule-edit label{font-size:.84rem;font-weight:650;color:#d8e3ea}
+input,select{width:100%;margin-top:7px;min-height:46px;border:1px solid #345064;border-radius:10px;padding:11px 12px;background:#0a1b27;color:var(--text);outline:none;transition:border-color .15s,box-shadow .15s}input:focus,select:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(62,228,139,.13)}input::placeholder{color:#688090}
+.password-wrap{position:relative}.password-wrap input{padding-right:46px}.password-toggle{position:absolute;right:6px;top:12px;width:36px;height:36px;border:0;background:transparent;cursor:pointer;opacity:.75}
+.private-note{margin-top:24px;color:var(--muted);font-size:.76rem;display:flex;justify-content:center;gap:8px;align-items:center}.private-note span{width:7px;height:7px;border-radius:50%;background:var(--accent)}.private-note b{font-weight:400;color:#526d7f}
+.message{min-height:20px;font-size:.82rem}.message.error{color:#ff9098}.message.success{color:var(--accent)}
+
+.primary,.ghost,.outline-accent,.outline-danger,.danger,.secondary{min-height:44px;border-radius:10px;padding:10px 15px;font-weight:750;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;gap:8px;transition:transform .12s,filter .12s,border-color .12s}.primary:hover,.outline-accent:hover,.outline-danger:hover,.ghost:hover{filter:brightness(1.07)}.primary:active,.outline-accent:active,.outline-danger:active,.ghost:active{transform:translateY(1px)}
+.primary{border:1px solid transparent;background:linear-gradient(135deg,#48e895,#2bd37f);color:#04130c;box-shadow:0 10px 24px rgba(42,210,127,.16)}.wide{width:100%}.ghost{background:transparent;border:1px solid #3a5669;color:#d9e5ec}.outline-accent{background:rgba(62,228,139,.03);border:1px solid var(--accent);color:var(--accent)}.outline-danger{background:rgba(255,93,104,.03);border:1px solid #b84752;color:var(--danger)}.danger{border:1px solid #b84752;color:var(--danger);background:var(--danger-soft)}.solid-danger{background:linear-gradient(135deg,#ff626c,#e74755);color:#fff;border:0}.small{min-height:38px;padding:7px 11px;font-size:.82rem}
+
+.app-shell{width:min(100%,1080px);margin:0 auto;min-height:100vh;padding:18px 20px 110px}.desktop-frame{background:rgba(7,19,29,.45)}
+.app-header{height:72px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid rgba(76,105,122,.25);margin-bottom:24px}.header-brand{display:flex;align-items:center;gap:12px}.mini-logo{width:38px;height:38px;display:grid;place-items:center;border-radius:12px;background:var(--accent-soft);color:var(--accent)}.mini-logo svg{width:28px;height:28px}.app-header h1{margin:0;font-size:1.15rem}.app-header p{margin:3px 0 0;color:var(--muted);font-size:.77rem}.icon-button,.icon-button-small,.month-arrow,.modal-close{border:1px solid var(--border);background:#0a1b27;border-radius:10px;display:grid;place-items:center;cursor:pointer}.icon-button{width:42px;height:42px}.icon-button-small{width:38px;height:38px}.danger-icon{color:var(--danger);border-color:#713d47;background:var(--danger-soft)}
+.view-container{animation:viewIn .18s ease both}@keyframes viewIn{from{opacity:.55;transform:translateY(4px)}to{opacity:1;transform:none}}
+.eyebrow{text-transform:uppercase;letter-spacing:.12em;font-size:.68rem;font-weight:800;color:var(--accent)}
+.today-intro,.month-heading,.history-header,.settings-header{display:flex;align-items:flex-end;justify-content:space-between;gap:14px;margin:0 0 18px}.today-intro h2,.month-heading h2,.history-header h2,.settings-header h2{margin:4px 0 0;font-size:1.65rem}.month-heading p,.history-header p,.settings-header p{color:var(--muted);margin:6px 0 0;font-size:.9rem}.date-chip{display:flex;align-items:center;gap:8px;color:#c5d5df;font-size:.8rem;border:1px solid var(--border);background:#0a1b27;border-radius:12px;padding:9px 11px}
+.summary-grid{display:grid;gap:12px;margin-bottom:18px}.summary-grid.three{grid-template-columns:repeat(3,1fr)}.summary-grid.four{grid-template-columns:repeat(4,1fr)}.summary-grid article{border:1px solid var(--border);border-radius:13px;background:linear-gradient(180deg,#102635,#0b1f2c);padding:15px;min-width:0}.summary-grid span{display:block;color:var(--muted);font-size:.74rem}.summary-grid strong{display:block;margin-top:7px;font-size:1.45rem;white-space:nowrap}.summary-grid .accent-card strong{color:var(--accent)}
+.dealer-panel,.chart-card,.history-card,.settings-card,.account-card{border:1px solid var(--border);background:linear-gradient(180deg,rgba(13,33,48,.94),rgba(8,26,38,.94));border-radius:16px;padding:18px;box-shadow:0 12px 35px rgba(0,0,0,.12)}
+.section-title-row{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;margin-bottom:12px}.section-title-row h2{margin:0;font-size:1.03rem}.section-title-row p{margin:4px 0 0;color:var(--muted);font-size:.8rem}.save-state{font-size:.72rem;color:var(--accent);padding:6px 9px;border:1px solid rgba(62,228,139,.26);border-radius:999px;background:var(--accent-soft)}.save-state.saving{color:#ffd37a;border-color:rgba(255,211,122,.3);background:rgba(255,211,122,.08)}.save-state.error{color:#ff9098;border-color:rgba(255,93,104,.3);background:var(--danger-soft)}
+.dealer-list{display:grid}.dealer-card{display:grid;grid-template-columns:minmax(0,1fr) 96px 135px auto;align-items:center;gap:14px;padding:16px 0;border-bottom:1px solid rgba(67,94,112,.38)}.dealer-card:last-child{border-bottom:0}.dealer-info h3{margin:0 0 4px;font-size:.97rem}.dealer-info p{margin:0;color:#b4c5d0;font-size:.76rem}.today-only{display:inline-block;margin-top:6px;color:var(--accent);font-size:.67rem;background:var(--accent-soft);border-radius:999px;padding:3px 7px}.cars-input span,.dealer-amount span{display:block;color:var(--muted);font-size:.69rem}.cars-input input{margin-top:5px;text-align:center;font-size:1rem;font-weight:800;padding:8px;min-height:42px}.dealer-amount{text-align:right}.dealer-amount strong{display:block;color:var(--accent);margin-top:5px;font-size:1rem}.remove-today{min-height:40px;padding:8px 11px;font-size:.75rem}.route-actions{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-top:16px;padding-top:2px}.month-mini{text-align:right}.month-mini span{display:block;color:var(--muted);font-size:.68rem}.month-mini strong{display:block;margin-top:3px;font-size:1rem}
+.empty-state{text-align:center;padding:34px 20px}.empty-icon{width:58px;height:58px;margin:0 auto 12px;color:#527286}.empty-icon svg{width:100%;height:100%}.empty-state h3{margin:0}.empty-state p{margin:7px auto 0;color:var(--muted);max-width:380px;font-size:.85rem}.compact-empty{padding:22px}
+
+.month-heading{align-items:center;text-align:center;justify-content:center}.month-heading>div{min-width:min(480px,70vw)}.month-arrow{width:40px;height:40px;font-size:1.55rem}.chart-card{margin-top:16px}.bar-chart{height:280px;display:flex;align-items:stretch;gap:7px;padding-top:25px;overflow-x:auto}.bar-column{min-width:34px;flex:1;display:grid;grid-template-rows:24px 1fr 22px;align-items:end;text-align:center}.bar-value{font-size:.58rem;color:#8299a8;opacity:0;transition:opacity .15s}.bar-column:hover .bar-value{opacity:1}.bar-track{height:100%;display:flex;align-items:flex-end;justify-content:center;border-bottom:1px solid #315063}.bar{width:min(24px,68%);min-height:5px;background:linear-gradient(180deg,#4bea99,#27c978);border-radius:5px 5px 1px 1px;box-shadow:0 0 16px rgba(62,228,139,.11)}.bar-column>span{font-size:.62rem;color:var(--muted);padding-top:5px}.empty-chart{height:180px;display:grid;place-items:center;color:var(--muted);font-size:.88rem;border:1px dashed #2b495d;border-radius:12px}
+
+.history-tabs{display:grid;grid-template-columns:1fr 1fr;border:1px solid var(--border);border-radius:12px;overflow:hidden;background:#0a1c29;margin-bottom:14px}.history-tab{min-height:44px;border:0;background:transparent;color:#a8bbc7;cursor:pointer;position:relative}.history-tab.active{color:#fff;background:#102837}.history-tab.active:after{content:"";position:absolute;height:3px;left:0;right:0;bottom:0;background:var(--accent)}.history-card{padding:8px 16px}.history-day{border-bottom:1px solid rgba(67,94,112,.38)}.history-day:last-child{border-bottom:0}.history-day summary{list-style:none;display:grid;grid-template-columns:1fr auto 18px;align-items:center;gap:14px;padding:16px 0;cursor:pointer}.history-day summary::-webkit-details-marker{display:none}.history-day summary div strong{display:block;font-size:.9rem}.history-day summary span{display:block;margin-top:4px;color:var(--muted);font-size:.72rem}.history-day summary>b{color:var(--accent);font-size:.9rem}.history-day summary i{font-style:normal;color:#7891a1;font-size:1.3rem;transition:transform .15s}.history-day[open] summary i{transform:rotate(90deg)}.history-detail{border-top:1px dashed rgba(67,94,112,.35);padding:7px 0 12px}.history-detail>div{display:flex;justify-content:space-between;gap:12px;padding:8px 4px;color:#cfdae1;font-size:.8rem}.history-detail small{color:var(--muted);margin-left:6px}.month-history-row{width:100%;display:grid;grid-template-columns:1fr auto 18px;align-items:center;gap:12px;text-align:left;border:0;border-bottom:1px solid rgba(67,94,112,.38);padding:16px 0;background:transparent;cursor:pointer}.month-history-row:last-child{border-bottom:0}.month-history-row strong{display:block}.month-history-row span{display:block;color:var(--muted);font-size:.72rem;margin-top:4px}.month-history-row b{color:var(--accent)}.month-history-row i{font-style:normal;color:#7891a1;font-size:1.3rem}
+
+.settings-card{padding:0;overflow:hidden}.day-tabs{display:grid;grid-template-columns:repeat(7,1fr);gap:0;background:#091c29;border-bottom:1px solid var(--border)}.day-tab{min-height:48px;border:0;border-right:1px solid rgba(67,94,112,.25);background:transparent;color:#879eac;cursor:pointer;font-size:.76rem}.day-tab:last-child{border-right:0}.day-tab.active{background:var(--accent);color:#052015;font-weight:850}.schedule-groups{padding:18px}.schedule-group{display:none}.schedule-group.active{display:block}.schedule-group-title{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:7px}.schedule-group-title h3{margin:0;font-size:1rem}.schedule-list{display:grid}.schedule-row{padding:13px 0;border-bottom:1px solid rgba(67,94,112,.38)}.schedule-row:last-child{border-bottom:0}.schedule-read{display:flex;justify-content:space-between;align-items:center;gap:12px}.schedule-read strong{display:block;font-size:.9rem}.schedule-read span{display:block;margin-top:4px;color:#aebfca;font-size:.73rem}.schedule-actions{display:flex;gap:7px}.schedule-edit{display:grid;grid-template-columns:1fr 140px auto;gap:10px;align-items:end}.schedule-edit input{margin-top:5px;min-height:42px}.edit-buttons{display:flex;gap:7px}.empty-day{padding:18px 0}.account-card{margin-top:16px;display:flex;justify-content:space-between;align-items:center;gap:12px}.account-card h3{margin:0}.account-card p{margin:5px 0 0;color:var(--muted);font-size:.8rem}
+
+.bottom-nav{position:fixed;left:50%;bottom:12px;transform:translateX(-50%);width:min(620px,calc(100% - 24px));height:68px;display:grid;grid-template-columns:repeat(4,1fr);z-index:20;border:1px solid #274559;border-radius:18px;background:rgba(7,23,34,.94);backdrop-filter:blur(18px);box-shadow:0 18px 40px rgba(0,0,0,.4);overflow:hidden}.nav-item{border:0;background:transparent;color:#79919f;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;cursor:pointer}.nav-item svg{width:21px;height:21px}.nav-item span{font-size:.64rem}.nav-item.active{color:var(--accent);background:rgba(62,228,139,.045)}
+
+.modal{width:min(480px,calc(100% - 28px));border:1px solid #36556a;border-radius:15px;background:#0d2230;color:var(--text);padding:0;box-shadow:0 30px 90px rgba(0,0,0,.55)}.modal::backdrop{background:rgba(0,8,14,.72);backdrop-filter:blur(3px)}.modal form{padding:22px;display:grid;gap:14px}.modal-header{display:flex;justify-content:space-between;gap:12px}.modal-header h2{margin:0;font-size:1.1rem}.modal-header p{margin:5px 0 0;color:var(--muted);font-size:.78rem}.modal-close{width:34px;height:34px;font-size:1.3rem}.confirm-actions{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:5px}
+
+@media(min-width:900px){.app-shell{padding-bottom:115px}.bottom-nav{bottom:20px}.view-container{min-height:610px}.dealer-panel{padding:20px}.auth-card{padding:42px 34px 32px}}
+@media(max-width:760px){
+  .app-shell{padding:10px 12px 100px}.app-header{height:62px;margin-bottom:17px}.mini-logo{display:none}.app-header h1{font-size:1rem}.app-header p{font-size:.7rem}.icon-button{width:38px;height:38px}
+  .today-intro,.history-header,.settings-header{align-items:flex-start}.today-intro h2,.month-heading h2,.history-header h2,.settings-header h2{font-size:1.35rem}.date-chip{display:none}
+  .summary-grid.three{grid-template-columns:repeat(3,1fr);gap:7px}.summary-grid.four{grid-template-columns:repeat(2,1fr);gap:8px}.summary-grid article{padding:11px 10px}.summary-grid span{font-size:.62rem}.summary-grid strong{font-size:1.12rem;margin-top:5px}.summary-grid.three article:first-child strong,.summary-grid.three article:nth-child(2) strong{font-size:1.3rem}
+  .dealer-panel,.chart-card,.history-card,.account-card{padding:13px}.section-title-row p{font-size:.73rem}.dealer-card{grid-template-columns:minmax(0,1fr) 68px 88px;gap:8px;padding:14px 0}.dealer-info h3{font-size:.88rem}.dealer-info p{font-size:.68rem}.cars-input span,.dealer-amount span{font-size:.6rem}.cars-input input{min-height:39px;padding:7px;font-size:.9rem}.dealer-amount strong{font-size:.87rem}.remove-today{grid-column:1/-1;min-height:37px}.route-actions{align-items:stretch}.route-actions .outline-accent{flex:1}.month-mini{display:none}
+  .month-heading>div{min-width:0;flex:1}.month-heading p{font-size:.74rem}.bar-chart{height:240px;gap:4px}.bar-column{min-width:28px}.bar{width:18px}
+  .history-card{padding:4px 12px}.history-day summary{gap:8px}.history-day summary div strong{font-size:.79rem}.history-day summary>b{font-size:.79rem}.history-detail>div{font-size:.74rem}
+  .settings-card{border-radius:13px}.day-tabs{overflow-x:auto;display:flex}.day-tab{min-width:65px;padding:0 10px}.schedule-groups{padding:14px}.schedule-group-title{align-items:flex-start}.schedule-group-title .outline-accent span{display:none}.schedule-edit{grid-template-columns:1fr}.edit-buttons{width:100%}.edit-buttons button{flex:1}.account-card{align-items:flex-start;flex-direction:column}.account-card button{width:100%}
+  .bottom-nav{bottom:8px;width:calc(100% - 16px);height:64px;border-radius:16px}.nav-item span{font-size:.59rem}
+}
+@media(max-width:390px){.summary-grid strong{font-size:1rem}.summary-grid span{font-size:.57rem}.dealer-card{grid-template-columns:minmax(0,1fr) 62px 82px}.dealer-amount strong{font-size:.8rem}.outline-accent,.outline-danger{padding-inline:10px}.auth-card{padding:30px 22px}}
+
+/* Monthly dealership totals + CSV export */
+.dealer-breakdown-card{margin-top:16px;border:1px solid var(--border);background:linear-gradient(180deg,rgba(13,33,48,.94),rgba(8,26,38,.94));border-radius:16px;padding:18px;box-shadow:0 12px 35px rgba(0,0,0,.12)}
+.breakdown-heading{align-items:center}.export-button{white-space:nowrap}.dealer-breakdown-list{display:grid}.dealer-breakdown-row{display:flex;align-items:center;justify-content:space-between;gap:18px;padding:14px 2px;border-bottom:1px solid rgba(67,94,112,.38)}.dealer-breakdown-row:last-child{border-bottom:0}.dealer-breakdown-row strong{display:block;font-size:.92rem}.dealer-breakdown-row span{display:block;margin-top:4px;color:var(--muted);font-size:.72rem}.dealer-breakdown-row b{color:var(--accent);font-size:1rem;white-space:nowrap}
+
+/* Past work-day editor */
+.history-edit-action{display:flex!important;justify-content:flex-end!important;align-items:center!important;padding:11px 4px 4px!important;border-top:1px dashed rgba(67,94,112,.3)}.history-today-note{color:var(--muted);font-size:.7rem}
+.edit-day-modal{width:min(760px,calc(100% - 28px));max-height:min(86vh,820px);overflow:auto}.edit-day-modal form{gap:12px}.edit-day-rows{display:grid;gap:10px;max-height:48vh;overflow:auto;padding-right:3px}.edit-day-row{border:1px solid var(--border);border-radius:12px;padding:12px;background:#091c29;transition:opacity .15s,border-color .15s}.edit-day-row.marked-delete{opacity:.48;border-color:#7b3b45;background:rgba(255,93,104,.06)}.edit-day-fields{display:grid;grid-template-columns:minmax(150px,1.6fr) 82px 112px 110px;gap:9px;align-items:end}.edit-day-fields input{min-height:42px;margin-top:5px}.edit-row-amount{padding-bottom:7px;text-align:right}.edit-row-amount span{display:block;color:var(--muted);font-size:.68rem}.edit-row-amount strong{display:block;margin-top:4px;color:var(--accent);font-size:.9rem}.toggle-edit-row{width:100%;min-height:36px;margin-top:9px}.edit-day-footer{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:2px}
+
+@media(max-width:760px){
+  .dealer-breakdown-card{padding:13px}.breakdown-heading{align-items:stretch;flex-direction:column}.export-button{width:100%}.dealer-breakdown-row{padding:12px 0}.dealer-breakdown-row strong{font-size:.84rem}.dealer-breakdown-row b{font-size:.9rem}
+  .edit-day-modal{width:calc(100% - 16px);max-height:92vh}.edit-day-modal form{padding:15px}.edit-day-rows{max-height:55vh}.edit-day-fields{grid-template-columns:1fr 78px}.edit-day-fields label:first-child{grid-column:1/-1}.edit-row-amount{text-align:left;padding:3px 0 4px}.edit-day-footer{grid-template-columns:1fr}.history-edit-action .outline-accent{width:100%}
+}
+
+/* v1.2 dealership model: one dealership, multiple recurring weekdays */
+.dealership-settings-card{padding:0;overflow:hidden}
+.dealership-settings-list{display:grid}
+.dealership-settings-row{padding:18px;border-bottom:1px solid rgba(67,94,112,.38);background:rgba(7,24,35,.2)}
+.dealership-settings-row:last-child{border-bottom:0}
+.dealership-settings-fields{display:grid;grid-template-columns:minmax(180px,1.5fr) 150px auto;gap:12px;align-items:end}
+.dealership-settings-fields label{font-size:.84rem;font-weight:650;color:#d8e3ea}
+.dealership-settings-fields input{margin-top:6px;min-height:44px;width:100%;border:1px solid var(--border);border-radius:10px;background:#071923;color:var(--text);padding:0 12px;outline:none}
+.dealership-settings-fields input:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(61,226,150,.12)}
+.dealer-setting-actions{display:flex;gap:8px;align-items:center}
+.dealer-setting-actions .save-dealership{min-width:78px}
+.weekday-picker{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:7px;margin-top:14px}
+.weekday-option{position:relative;cursor:pointer;user-select:none}
+.weekday-option input{position:absolute;opacity:0;pointer-events:none}
+.weekday-option span{min-height:38px;display:grid;place-items:center;border:1px solid var(--border);border-radius:10px;background:#091c29;color:#91a8b6;font-size:.72rem;font-weight:750;transition:.15s ease}
+.weekday-option input:checked + span{background:var(--accent);border-color:var(--accent);color:#052015;box-shadow:0 7px 18px rgba(61,226,150,.12)}
+.weekday-option input:focus-visible + span{outline:2px solid #fff;outline-offset:2px}
+.settings-tip{margin-top:12px;border:1px solid rgba(61,226,150,.22);background:rgba(61,226,150,.06);border-radius:12px;padding:12px 14px;color:#b8cbd5;font-size:.8rem;line-height:1.5}
+.settings-tip strong{color:var(--accent)}
+.modal-field-label{display:block;margin-bottom:7px;font-size:.84rem;font-weight:650;color:#d8e3ea}
+.modal-weekday-picker{margin-top:0}
+
+@media (max-width:700px){
+  .settings-header{flex-direction:column;align-items:stretch}
+  .settings-header #openNewDealership{width:100%}
+  .dealership-settings-row{padding:14px}
+  .dealership-settings-fields{grid-template-columns:1fr 112px}
+  .dealer-setting-actions{grid-column:1/-1}
+  .dealer-setting-actions .save-dealership{flex:1}
+  .weekday-picker{grid-template-columns:repeat(4,1fr)}
+  .weekday-option span{min-height:42px}
+}

@@ -1,0 +1,12 @@
+{
+  "name": "Car Wash Tracker",
+  "short_name": "Wash Tracker",
+  "description": "Private dealership car wash tracker",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#07131d",
+  "theme_color": "#07131d",
+  "icons": [
+    { "src": "/icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any maskable" }
+  ]
+}
