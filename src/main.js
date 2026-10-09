@@ -572,7 +572,7 @@ function bindViewEvents() {
 
 function syncEntryState(item, cars) {
   const today = dateKey(new Date())
-  const make = () => ({ user_id:state.session.user.id, work_date:today, route_key:savedItem.key, dealership:savedItem.name, rate_snapshot:savedItem.rate, cars })
+  const make = () => ({ user_id:state.session.user.id, work_date:today, route_key:item.key, dealership:item.name, rate_snapshot:item.rate, cars })
   const existingIndex = state.entries.findIndex(e => e.route_key === item.key)
   if (existingIndex >= 0) state.entries[existingIndex] = { ...state.entries[existingIndex], ...make() }
   else state.entries.push(make())

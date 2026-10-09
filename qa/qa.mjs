@@ -26,7 +26,7 @@ let transformed = mainSource
   .replace("const app = document.querySelector('#app')", 'const app = null')
 const bootIndex = transformed.lastIndexOf('\nboot()')
 if (bootIndex >= 0) transformed = transformed.slice(0, bootIndex) + transformed.slice(bootIndex + '\nboot()'.length)
-transformed += `\nexport { state, DAY_NAMES, dateKey, monthKey, monthBounds, esc, todayRoute, sumEntries, historyByDay, dealershipTotals, shiftMonthKey, renderTodayView, renderSettingsView, exportMonthCsv };\n`
+transformed += `\nexport { state, DAY_NAMES, dateKey, monthKey, monthBounds, esc, todayRoute, sumEntries, historyByDay, dealershipTotals, shiftMonthKey, renderTodayView, renderSettingsView, exportMonthCsv, syncEntryState };\n`
 const tempFile = path.join(os.tmpdir(), `car-wash-qa-${process.pid}.mjs`)
 await fs.writeFile(tempFile, transformed)
 const m = await import(`${pathToFileURL(tempFile).href}?v=${Date.now()}`)
@@ -80,6 +80,23 @@ await test('Today-only dealership is appended without altering recurring dealers
   const out = m.todayRoute()
   assert.deepEqual(out.map(x => x.name), ['Toyota', 'Ford'])
   assert.equal(out[1].key, 'extra:o2')
+})
+await test('Car count autosave state uses the selected dealership', () => {
+  m.state.session = { user:{ id:'u1' } }
+  m.state.entries = []
+  m.state.monthEntries = []
+  m.state.history = []
+  const item = { key:'dealership:d1', name:'Toyota', rate:12 }
+  m.syncEntryState(item, 7)
+  assert.deepEqual(
+    m.state.entries.map(({ user_id, route_key, dealership, rate_snapshot, cars }) => ({ user_id, route_key, dealership, rate_snapshot, cars })),
+    [{ user_id:'u1', route_key:'dealership:d1', dealership:'Toyota', rate_snapshot:12, cars:7 }],
+  )
+  m.syncEntryState(item, 9)
+  assert.equal(m.state.entries.length, 1)
+  assert.equal(m.state.entries[0].cars, 9)
+  assert.equal(m.state.monthEntries[0].cars, 9)
+  assert.equal(m.state.history[0].cars, 9)
 })
 await test('Today card preserves saved rate snapshot after Settings rate changes', () => {
   m.state.dealerships = [{ id:'d1', name:'Toyota', rate:14 }]
