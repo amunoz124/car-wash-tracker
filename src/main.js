@@ -441,10 +441,11 @@ function renderMonthlyView() {
 }
 
 function renderHistoryView() {
-  const days = historyByDay().filter(d => d.cars > 0)
+  const days = historyByDay()
   const months = historyByMonth()
   return `
-    <section class="history-header"><div><div class="eyebrow">History</div><h2>Your Work History</h2><p>Review daily totals or jump to a previous month.</p></div></section>
+    <section class="history-header"><div><div class="eyebrow">History</div><h2>Your Work History</h2><p>Review your records or add a day you forgot.</p></div><button id="addMissedDay" class="primary missed-day-button">${icons.plus}<span>Add Missed Day</span></button></section>
+    <div id="missedDayOpenMessage" class="message hidden" role="status"></div>
     <div class="history-tabs"><button class="history-tab active" data-history="daily">Daily History</button><button class="history-tab" data-history="monthly">Monthly History</button></div>
     <section id="dailyHistory" class="history-card">
       ${days.length ? days.map(day => {
@@ -502,23 +503,173 @@ function renderRemoveModal() {
 
 
 function renderEditDayModal() {
-  return `<dialog id="editDayModal" class="modal edit-day-modal"><form id="editDayForm"><div class="modal-header"><div><h2>Edit Work Day</h2><p id="editDayLabel">Correct cars, rates, or missing dealerships.</p></div><button id="closeEditDayModal" class="modal-close" type="button">×</button></div><div id="editDayRows" class="edit-day-rows"></div><button id="addPastDealer" class="outline-accent wide" type="button">${icons.plus}<span>Add Dealership to This Day</span></button><div class="edit-day-footer"><button class="primary" type="submit">Save Changes</button><button id="cancelEditDay" class="ghost" type="button">Cancel</button></div><div id="editDayMessage" class="message"></div></form></dialog>`
+  return `<dialog id="editDayModal" class="modal edit-day-modal"><form id="editDayForm">
+    <div class="modal-header"><div><h2 id="editDayTitle">Edit Work Day</h2><p id="editDayLabel">Correct cars, rates, or missing dealerships.</p></div><button id="closeEditDayModal" class="modal-close" type="button" aria-label="Close">×</button></div>
+    <div id="editDayDateField" class="edit-day-date-field hidden">
+      <label for="openMissedDayCalendar">Work date (past 12 months)</label>
+      <input id="editDayDate" type="hidden">
+      <button id="openMissedDayCalendar" class="missed-day-date-button" type="button" aria-controls="missedDayCalendar" aria-expanded="false">Choose a date</button>
+      <section id="missedDayCalendar" class="missed-day-calendar hidden" aria-label="Choose an unrecorded work date">
+        <div class="missed-day-calendar-header"><button id="missedDayPrevMonth" class="month-arrow" type="button" aria-label="Previous month">‹</button><strong id="missedDayCalendarLabel" aria-live="polite"></strong><button id="missedDayNextMonth" class="month-arrow" type="button" aria-label="Next month">›</button></div>
+        <div class="missed-day-weekdays" aria-hidden="true">${DAY_NAMES.map(day => `<span>${day.slice(0,2)}</span>`).join('')}</div>
+        <div id="missedDayCalendarDays" class="missed-day-calendar-days"></div>
+        <p class="missed-day-calendar-note">Crossed-out dates already have data. Use <strong>Edit This Day</strong> in History to change them.</p>
+      </section>
+    </div>
+    <p id="missedDayHint" class="missed-day-hint hidden"></p>
+    <div id="editDayRows" class="edit-day-rows"></div>
+    <button id="addPastDealer" class="outline-accent wide" type="button">${icons.plus}<span>Add Dealership to This Day</span></button>
+    <div id="editDayMessage" class="message" role="status"></div>
+    <div class="edit-day-footer"><button class="primary" type="submit">Save Changes</button><button id="cancelEditDay" class="ghost" type="button">Cancel</button></div>
+  </form></dialog>`
 }
 
 function editDayRow(entry = {}) {
   const isNew = !entry.id
-  return `<div class="edit-day-row" data-id="${entry.id || ''}" data-new="${isNew ? 'true' : 'false'}" data-deleted="false"><div class="edit-day-fields"><label>Dealership<input class="edit-dealer-name" value="${esc(entry.dealership || '')}" placeholder="Dealership name"></label><label>Cars<input class="edit-dealer-cars" type="number" min="0" step="1" inputmode="numeric" value="${Number(entry.cars || 0)}"></label><label>Rate / car<input class="edit-dealer-rate" type="number" min="0" step="0.01" value="${Number(entry.rate_snapshot || 0)}"></label><div class="edit-row-amount"><span>Amount</span><strong>${money(Number(entry.cars || 0) * Number(entry.rate_snapshot || 0))}</strong></div></div><button class="toggle-edit-row danger" type="button">${icons.trash}<span>Remove</span></button></div>`
+  const carsValue = entry.cars ?? ''
+  const rateValue = entry.rate_snapshot ?? ''
+  return `<div class="edit-day-row" data-id="${entry.id || ''}" data-new="${isNew ? 'true' : 'false'}" data-deleted="false"><div class="edit-day-fields"><label>Dealership<input class="edit-dealer-name" value="${esc(entry.dealership || '')}" placeholder="Dealership name" required></label><label>Cars<input class="edit-dealer-cars" type="number" min="0" step="1" inputmode="numeric" value="${carsValue}" placeholder="0" required></label><label>Rate / car<input class="edit-dealer-rate" type="number" min="0" step="0.01" value="${rateValue}" placeholder="0.00" required></label><div class="edit-row-amount"><span>Amount</span><strong>${money(Number(carsValue || 0) * Number(rateValue || 0))}</strong></div></div><button class="toggle-edit-row danger" type="button">${icons.trash}<span>Remove</span></button></div>`
 }
 
-function openEditDay(date) {
+function historyStartDate() {
+  const today = new Date()
+  return dateKey(new Date(today.getFullYear(), today.getMonth() - 11, 1))
+}
+
+function yesterdayDateKey() {
+  const today = new Date()
+  return dateKey(new Date(today.getFullYear(), today.getMonth(), today.getDate() - 1))
+}
+
+function scheduledDealershipsForDate(date) {
+  const weekday = new Date(`${date}T12:00:00`).getDay()
+  const ids = new Set(state.scheduleAssignments.filter(a => Number(a.weekday) === weekday).map(a => a.dealership_id))
+  return state.dealerships.filter(d => ids.has(d.id))
+}
+
+function entriesForEditDay(date, { missedDay = false } = {}) {
+  const saved = missedDay ? [] : state.history.filter(e => e.work_date === date)
+  if (saved.length) return { entries:saved, hint:'This date already has saved entries. Review them and add anything you missed.' }
+  const scheduled = scheduledDealershipsForDate(date)
+  if (scheduled.length) return {
+    entries:scheduled.map(d => ({ dealership:d.name, cars:'', rate_snapshot:d.rate })),
+    hint:'Dealerships are prefilled from your weekly schedule. Enter the cars for this date; adjust a dealership or rate if needed.',
+  }
+  return { entries:[{}], hint:'No dealerships are scheduled for this date. Add the dealerships and car counts you want to record.' }
+}
+
+let missedDayRecordedDates = new Set()
+let editDaySession = 0
+
+async function loadRecordedWorkDates() {
+  const dates = new Set()
+  for (let offset = 0; ; offset += 1000) {
+    const { data, error } = await supabase.from('work_entries').select('work_date')
+      .eq('user_id', state.session.user.id).gte('work_date', historyStartDate()).lte('work_date', yesterdayDateKey()).order('work_date').order('id')
+      .range(offset, offset + 999)
+    if (error) throw error
+    for (const entry of data) dates.add(entry.work_date)
+    if (data.length < 1000) return dates
+  }
+}
+
+function latestUnrecordedDate() {
+  const day = new Date(`${yesterdayDateKey()}T12:00:00`)
+  const first = historyStartDate()
+  while (dateKey(day) >= first) {
+    if (!missedDayRecordedDates.has(dateKey(day))) return dateKey(day)
+    day.setDate(day.getDate() - 1)
+  }
+  return ''
+}
+
+function renderMissedDayCalendar() {
   const modal = document.querySelector('#editDayModal')
+  const key = modal.dataset.calendarMonth
+  const [year, month] = key.split('-').map(Number)
+  const first = new Date(year, month - 1, 1, 12)
+  const days = new Date(year, month, 0).getDate()
+  const min = historyStartDate()
+  const max = yesterdayDateKey()
+  document.querySelector('#missedDayCalendarLabel').textContent = first.toLocaleDateString(undefined, { month:'long', year:'numeric' })
+  document.querySelector('#missedDayPrevMonth').disabled = key <= min.slice(0,7)
+  document.querySelector('#missedDayNextMonth').disabled = key >= max.slice(0,7)
+  let html = '<span aria-hidden="true"></span>'.repeat(first.getDay())
+  for (let day = 1; day <= days; day++) {
+    const d = new Date(year, month - 1, day, 12)
+    const date = dateKey(d)
+    const recorded = missedDayRecordedDates.has(date)
+    const disabled = recorded || date < min || date > max
+    const label = d.toLocaleDateString(undefined, { weekday:'long', month:'long', day:'numeric', year:'numeric' })
+    html += `<button type="button" class="missed-day-date ${recorded ? 'is-recorded' : ''}" data-date="${date}" ${disabled ? 'disabled' : ''} aria-pressed="${date === modal.dataset.date}" aria-label="${esc(label)}${recorded ? ', already recorded' : ''}" ${recorded ? 'title="Already recorded. Use Edit This Day in History."' : ''}>${day}</button>`
+  }
+  document.querySelector('#missedDayCalendarDays').innerHTML = html
+}
+
+function setMissedDayCalendarOpen(open) {
+  const modal = document.querySelector('#editDayModal')
+  modal.classList.toggle('choosing-missed-date', open)
+  document.querySelector('#missedDayCalendar').classList.toggle('hidden', !open)
+  document.querySelector('#openMissedDayCalendar').setAttribute('aria-expanded', String(open))
+  const date = modal.dataset.date
+  modal.querySelector('button[type="submit"]').disabled = modal.dataset.missedDay === 'true' && (open || !date || missedDayRecordedDates.has(date))
+}
+
+function populateMissedDay(date) {
+  const modal = document.querySelector('#editDayModal')
+  modal.dataset.session = String(++editDaySession)
+  modal.dataset.date = date
+  document.querySelector('#editDayDate').value = date
+  const label = date ? new Date(`${date}T12:00:00`).toLocaleDateString(undefined, { weekday:'short', month:'short', day:'numeric', year:'numeric' }) : 'Choose a date'
+  document.querySelector('#openMissedDayCalendar').textContent = label
+  const dayData = date ? entriesForEditDay(date, { missedDay:true }) : { entries:[], hint:'All dates in this history window are already recorded. Use Edit This Day in History.' }
+  document.querySelector('#missedDayHint').textContent = dayData.hint
+  document.querySelector('#editDayRows').innerHTML = dayData.entries.map(editDayRow).join('')
+  document.querySelector('#addPastDealer').disabled = !date
+  bindEditDayRowEvents()
+  modal.dataset.initialRows = editDayRowsSignature()
+  showMessage(date ? '' : dayData.hint, 'error', '#editDayMessage')
+}
+
+function editDayRowsSignature() {
+  return JSON.stringify([...document.querySelectorAll('#editDayRows .edit-day-row')].map(row => [
+    row.dataset.id,
+    row.dataset.deleted,
+    ...[...row.querySelectorAll('input')].map(input => input.value),
+  ]))
+}
+
+function openEditDay(date, { missedDay = false } = {}) {
+  const modal = document.querySelector('#editDayModal')
+  modal.dataset.session = String(++editDaySession)
+  modal.dataset.saving = 'false'
   const rows = document.querySelector('#editDayRows')
-  const entries = state.history.filter(e => e.work_date === date)
+  const dateField = document.querySelector('#editDayDateField')
+  const dateInput = document.querySelector('#editDayDate')
   const d = new Date(`${date}T12:00:00`)
   modal.dataset.date = date
-  document.querySelector('#editDayLabel').textContent = d.toLocaleDateString(undefined,{weekday:'long',month:'long',day:'numeric',year:'numeric'})
-  rows.innerHTML = entries.length ? entries.map(editDayRow).join('') : editDayRow()
+  modal.dataset.missedDay = String(missedDay)
+  document.querySelector('#editDayTitle').textContent = missedDay ? 'Add a Missed Day' : 'Edit Work Day'
+  document.querySelector('#editDayLabel').textContent = missedDay ? 'Choose the date and enter the work you forgot to record.' : d.toLocaleDateString(undefined,{weekday:'long',month:'long',day:'numeric',year:'numeric'})
+  dateField.classList.toggle('hidden', !missedDay)
+  dateInput.value = date
+  const dayData = entriesForEditDay(date, { missedDay })
+  document.querySelector('#missedDayHint').textContent = dayData.hint
+  document.querySelector('#missedDayHint').classList.toggle('hidden', !missedDay)
+  rows.innerHTML = dayData.entries.map(editDayRow).join('')
   bindEditDayRowEvents()
+  modal.dataset.initialRows = editDayRowsSignature()
+  showMessage('', 'error', '#editDayMessage')
+  modal.querySelector('button[type="submit"]').disabled = false
+  modal.querySelector('button[type="submit"]').textContent = 'Save Changes'
+  document.querySelector('#addPastDealer').disabled = false
+  document.querySelector('#openMissedDayCalendar').disabled = false
+  if (missedDay) {
+    populateMissedDay(date)
+    modal.dataset.calendarMonth = (date || yesterdayDateKey()).slice(0,7)
+    renderMissedDayCalendar()
+  }
+  setMissedDayCalendarOpen(missedDay && !date)
   modal.showModal()
 }
 
@@ -697,6 +848,54 @@ function bindMonthlyEvents() {
 }
 
 function bindHistoryEvents() {
+  document.querySelector('#addMissedDay')?.addEventListener('click', async (e) => {
+    const button = e.currentTarget
+    const userId = state.session.user.id
+    document.querySelector('#missedDayOpenMessage').className = 'message hidden'
+    button.disabled = true
+    button.textContent = 'Checking dates…'
+    try {
+      const dates = await loadRecordedWorkDates()
+      if (!button.isConnected || state.session?.user?.id !== userId) return
+      missedDayRecordedDates = dates
+      openEditDay(latestUnrecordedDate(), { missedDay:true })
+    } catch (error) {
+      if (button.isConnected) showMessage('Unable to check available dates. Please try again.', 'error', '#missedDayOpenMessage')
+    } finally {
+      if (button.isConnected) {
+        button.disabled = false
+        button.innerHTML = `${icons.plus}<span>Add Missed Day</span>`
+      }
+    }
+  })
+
+  document.querySelector('#openMissedDayCalendar')?.addEventListener('click', () => {
+    const open = document.querySelector('#missedDayCalendar').classList.contains('hidden')
+    renderMissedDayCalendar()
+    setMissedDayCalendarOpen(open)
+  })
+  for (const [selector, delta] of [['#missedDayPrevMonth', -1], ['#missedDayNextMonth', 1]]) {
+    document.querySelector(selector)?.addEventListener('click', () => {
+      const modal = document.querySelector('#editDayModal')
+      modal.dataset.calendarMonth = shiftMonthKey(modal.dataset.calendarMonth, delta)
+      renderMissedDayCalendar()
+    })
+  }
+  document.querySelector('#missedDayCalendarDays')?.addEventListener('click', (e) => {
+    const button = e.target.closest('.missed-day-date')
+    if (!button || button.disabled) return
+    const modal = document.querySelector('#editDayModal')
+    const date = button.dataset.date
+    if (date === modal.dataset.date) return setMissedDayCalendarOpen(false)
+    if (editDayRowsSignature() !== modal.dataset.initialRows && !confirm('Changing the date will discard the entries you have not saved. Change the date?')) {
+      setMissedDayCalendarOpen(false)
+      return
+    }
+    populateMissedDay(date)
+    renderMissedDayCalendar()
+    setMissedDayCalendarOpen(false)
+  })
+
   document.querySelectorAll('.history-tab').forEach(btn => btn.addEventListener('click', () => {
     document.querySelectorAll('.history-tab').forEach(x => x.classList.toggle('active', x === btn))
     document.querySelector('#dailyHistory').classList.toggle('hidden', btn.dataset.history !== 'daily')
@@ -724,7 +923,13 @@ function bindHistoryEvents() {
   document.querySelector('#editDayForm')?.addEventListener('submit', async (e) => {
     e.preventDefault()
     const modal = document.querySelector('#editDayModal')
+    if (modal.dataset.saving === 'true') return
+    const session = modal.dataset.session
     const date = modal.dataset.date
+    const missedDay = modal.dataset.missedDay === 'true'
+    if (missedDay && (!date || date < historyStartDate() || date > yesterdayDateKey() || missedDayRecordedDates.has(date))) {
+      return showMessage('Choose an available date with no saved data. Use Edit This Day in History for recorded dates.', 'error', '#editDayMessage')
+    }
     const rows = [...document.querySelectorAll('#editDayRows .edit-day-row')]
     const deleteIds = []
     const updates = []
@@ -750,10 +955,22 @@ function bindHistoryEvents() {
     }
 
     const saveButton = e.currentTarget.querySelector('button[type="submit"]')
+    modal.dataset.saving = 'true'
     saveButton.disabled = true
     saveButton.textContent = 'Saving…'
+    document.querySelector('#openMissedDayCalendar').disabled = true
 
     try {
+      if (missedDay) {
+        const { data, error } = await supabase.from('work_entries').select('id').eq('user_id', state.session.user.id).eq('work_date', date).limit(1)
+        if (!modal.open || modal.dataset.session !== session) return
+        if (error) throw new Error('Unable to check this date. Please try saving again.')
+        if (data.length) {
+          missedDayRecordedDates.add(date)
+          renderMissedDayCalendar()
+          throw new Error('This date already has saved data. Use Edit This Day in History.')
+        }
+      }
       if (deleteIds.length) {
         const { error } = await supabase.from('work_entries').delete().in('id', deleteIds)
         if (error) throw error
@@ -766,12 +983,21 @@ function bindHistoryEvents() {
         const { error } = await supabase.from('work_entries').insert(inserts)
         if (error) throw error
       }
-      modal.close()
-      await refresh(false)
+      if (modal.open && modal.dataset.session === session) {
+        modal.close()
+        await refresh(false)
+      }
     } catch (error) {
-      saveButton.disabled = false
-      saveButton.textContent = 'Save Changes'
-      showMessage(error.message, 'error', '#editDayMessage')
+      if (modal.open && modal.dataset.session === session) {
+        saveButton.disabled = missedDay && missedDayRecordedDates.has(date)
+        saveButton.textContent = 'Save Changes'
+        showMessage(error.message, 'error', '#editDayMessage')
+      }
+    } finally {
+      if (modal.isConnected && modal.dataset.session === session) {
+        modal.dataset.saving = 'false'
+        document.querySelector('#openMissedDayCalendar').disabled = false
+      }
     }
   })
 }
